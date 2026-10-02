@@ -1,0 +1,35 @@
+fold,variant,subset,MAE,MAPE_%,MedAPE_%,RMSE
+train Jan-04 -> test 05-06,baseline (distance band x equipment),all rows,201.5,8.16,5.91,665.4
+train Jan-04 -> test 05-06,baseline (distance band x equipment),clean rows,151.5,6.09,5.83,241.5
+train Jan-04 -> test 05-06,"final (no market_index, no quote_signal)",all rows,192.9,7.76,5.55,660.0
+train Jan-04 -> test 05-06,"final (no market_index, no quote_signal)",clean rows,142.7,5.7,5.51,224.0
+train Jan-04 -> test 05-06,+ market_index,all rows,112.9,4.7,2.04,635.6
+train Jan-04 -> test 05-06,+ market_index,clean rows,61.7,2.51,2.01,158.2
+train Jan-04 -> test 05-06,+ quote_signal,all rows,126.8,5.01,2.33,639.8
+train Jan-04 -> test 05-06,+ quote_signal,clean rows,75.8,2.84,2.3,170.6
+train Jan-04 -> test 05-06,+ market_index + quote_signal,all rows,103.3,4.14,1.43,630.9
+train Jan-04 -> test 05-06,+ market_index + quote_signal,clean rows,52.1,1.93,1.41,150.7
+train Jan-06 -> test 07-08,baseline (distance band x equipment),all rows,134.1,5.88,3.17,630.0
+train Jan-06 -> test 07-08,baseline (distance band x equipment),clean rows,83.5,3.69,3.13,129.7
+train Jan-06 -> test 07-08,"final (no market_index, no quote_signal)",all rows,103.8,4.4,1.87,623.1
+train Jan-06 -> test 07-08,"final (no market_index, no quote_signal)",clean rows,52.8,2.19,1.83,96.3
+train Jan-06 -> test 07-08,+ market_index,all rows,105.4,4.52,2.06,625.3
+train Jan-06 -> test 07-08,+ market_index,clean rows,54.3,2.32,2.04,96.2
+train Jan-06 -> test 07-08,+ quote_signal,all rows,129.8,5.87,2.4,627.3
+train Jan-06 -> test 07-08,+ quote_signal,clean rows,79.2,3.69,2.36,134.9
+train Jan-06 -> test 07-08,+ market_index + quote_signal,all rows,121.9,5.75,2.12,627.3
+train Jan-06 -> test 07-08,+ market_index + quote_signal,clean rows,71.0,3.61,2.08,118.9
+train Jan-08 -> test 09-10,baseline (distance band x equipment),all rows,133.8,6.02,3.09,638.3
+train Jan-08 -> test 09-10,baseline (distance band x equipment),clean rows,81.3,3.55,3.04,174.5
+train Jan-08 -> test 09-10,"final (no market_index, no quote_signal)",all rows,98.1,4.33,1.55,631.0
+train Jan-08 -> test 09-10,"final (no market_index, no quote_signal)",clean rows,45.4,1.86,1.52,151.8
+train Jan-08 -> test 09-10,+ market_index,all rows,170.2,7.21,4.72,651.5
+train Jan-08 -> test 09-10,+ market_index,clean rows,118.6,4.89,4.68,205.9
+train Jan-08 -> test 09-10,+ quote_signal,all rows,90.6,3.93,1.18,629.3
+train Jan-08 -> test 09-10,+ quote_signal,clean rows,37.9,1.47,1.15,149.3
+train Jan-08 -> test 09-10,+ market_index + quote_signal,all rows,141.8,5.98,3.48,642.7
+train Jan-08 -> test 09-10,+ market_index + quote_signal,clean rows,89.8,3.61,3.44,182.8
+RANDOM 80/20 (reference only),"final (no market_index, no quote_signal)",all rows,124.8,4.99,2.43,651.7
+RANDOM 80/20 (reference only),"final (no market_index, no quote_signal)",clean rows,73.7,2.91,2.39,208.4
+RANDOM 80/20 (reference only),+ quote_signal,all rows,105.8,4.16,1.61,646.1
+RANDOM 80/20 (reference only),+ quote_signal,clean rows,54.5,2.08,1.59,197.8

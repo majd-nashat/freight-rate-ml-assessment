@@ -1,0 +1,11 @@
+subset,variant,MAE,MAPE_%,MedAPE_%,RMSE
+all rows,+ market_index,129.5,5.48,2.94,637.47
+all rows,+ market_index + quote_signal,122.33,5.29,2.34,633.63
+all rows,+ quote_signal,115.73,4.94,1.97,632.13
+all rows,baseline (distance band x equipment),156.47,6.69,4.06,644.57
+all rows,"final (no market_index, no quote_signal)",131.6,5.5,2.99,638.03
+clean rows,+ market_index,78.2,3.24,2.91,153.43
+clean rows,+ market_index + quote_signal,70.97,3.05,2.31,150.8
+clean rows,+ quote_signal,64.3,2.67,1.94,151.6
+clean rows,baseline (distance band x equipment),105.43,4.44,4.0,181.9
+clean rows,"final (no market_index, no quote_signal)",80.3,3.25,2.95,157.37
