@@ -1,125 +1,46 @@
-# Freight Rate Prediction
+# Freight Rate Prediction - Spotter Labs ML Assessment
 
-## Project Overview
+Predicts the posted rate of freight loads. Final model: LightGBM on `log(rate per mile)`,
+averaged over 5 seeds, using distance, equipment, weight, pickup/delivery coordinates and day of week.
 
-This project predicts freight rates for loads using historical freight data.
+## Setup
 
-The task is treated as a forecasting problem because the validation period comes after the training period. The model is trained on historical development data and then used to generate predictions for the validation loads and the December 2025 fixed-load chart.
-
-## Data Preparation
-
-The data cleaning process includes:
-
-* Negative weights are converted to absolute values.
-* Missing weights are filled using the median weight from the training data.
-* Missing `market_index` values are filled using the median value from the same day.
-* Implausible target values are identified using rate-per-mile thresholds.
-* Target outliers are excluded from model fitting but are kept for evaluation and prediction.
-
-There are 646 flagged target outliers.
-
-## Validation Strategy
-
-A chronological expanding-window validation approach is used instead of a random split.
-
-| Fold | Training Period  | Test Period         |
-| ---- | ---------------- | ------------------- |
-| 1    | January – April  | May – June          |
-| 2    | January – June   | July – August       |
-| 3    | January – August | September – October |
-
-The models are evaluated using:
-
-* MAE
-* MAPE
-* Median APE
-* RMSE
-
-Results are reported for both all rows and clean rows.
-
-## Feature Engineering
-
-The final model uses:
-
-* Distance
-* Equipment type
-* Weight
-* Pickup latitude and longitude
-* Delivery latitude and longitude
-* Day of week
-
-Coordinates are used instead of city names because some validation cities are unseen during training.
-
-## Model
-
-The final model uses LightGBM to predict:
-
-`log(rate per mile)`
-
-The predicted rate is then calculated from the predicted rate per mile and the load distance.
-
-The model uses a Huber loss and averages predictions across five random seeds.
-
-The main model configuration uses:
-
-* 400 trees
-* Learning rate: 0.05
-* 15 leaves
-* Minimum 40 samples per leaf
-
-## Model Comparison
-
-The final model is compared with:
-
-* A distance-band and equipment baseline
-* The final model with `market_index`
-* The final model with `quote_signal`
-* The final model with calendar features
-* The alternative workflow from the original notebook
-* An alternative workflow using cleaned weight and coordinates
-
-The validation analysis is performed using the same chronological folds for all candidates.
-
-## Final Predictions
-
-After model comparison, the final model is trained on the available development data while excluding the flagged target outliers from model fitting.
-
-Predictions are generated for:
-
-* Validation loads
-* The 31 December 2025 chart rows
-
-The validation predictions contain:
-
-* `load_id`
-* `predicted_rate`
-
-Sanity checks verify that predictions are present and positive.
-
-## December 2025 Chart
-
-The notebook generates a December 2025 prediction curve for a fixed load from Lexington to Fort Wayne.
-
-The December predictions are also compared with the alternative workflow.
-
-Because there are no December target labels, the true December rate level cannot be directly verified. This is identified as an important limitation of the December forecast.
-
-## Results
-
-The validation results and summary are included in:
-
-* `validation_results.csv`
-* `validation_summary.csv`
-
-The main notebook containing the full analysis, model development, validation, predictions, and December chart is:
-
-* `Freight_Rate_last.ipynb`
-
-## Project Files
-
-```text
-Freight_Rate_last.ipynb
-validation_results.csv
-validation_summary.csv
-README.md
+```bash
+python -m venv .venv && source .venv/bin/activate     # Windows: .venv\Scripts\activate
+python -m pip install -r requirements.txt
 ```
+
+Place the provided files in `data/` with these names:
+`train_test.csv`, `validation.csv`, `validation_predictions_template.csv`, `december_chart_inputs.csv`.
+
+## Run
+
+```bash
+python -m src.validate     # time-based validation + ablations -> results/*.csv  (~1 min)
+python -m src.predict      # final model -> validation_predictions.csv + December predictions
+python score.py --predictions validation_predictions.csv --december-predictions data/december_chart_inputs.csv
+```
+
+`score.py` validates both files and creates `scorer_results/candidate_december.png`.
+
+## Structure
+
+```
+src/config.py     constants, feature list, model parameters
+src/data.py       loading and cleaning (applied identically to train and validation)
+src/features.py   feature building, city -> coordinates lookup
+src/model.py      LightGBM model (log rate per mile, seed-averaged)
+src/metrics.py    MAE, MAPE, MedAPE, RMSE
+src/validate.py   expanding-window time-based validation, baseline, ablations
+src/predict.py    final fit and submission files
+notebooks/01_eda.ipynb   exploratory analysis and data-quality findings
+results/          validation_results.csv, validation_summary.csv
+```
+
+## Key decisions
+
+- **Split:** time-based, expanding window (3 folds). `validation.csv` lies after all training data, so the task is a forecast; a random split is reported only as a reference and is optimistic.
+- **Cleaning:** negative `weight` values (sign errors) -> absolute value; missing `weight` -> training median. 646 training rows (1.3%) with an implausible rate per mile (<1 or >5) are excluded from fitting, never from evaluation or prediction.
+- **Excluded features:** `quote_signal` matches the rate per mile in some months, is distorted in others, and is flat in the validation period. `market_index` helps in some folds and hurts in others, shifts in distribution, and is absent from the December inputs.
+- **Unseen cities:** 8 cities appear only in `validation.csv` (12% of rows), so lanes are described by coordinates and distance, not by city names.
+- **December chart:** city coordinates come from a lookup built from the provided files; the model needs no other inputs, so the chart shows the pure date effect (day of week).
